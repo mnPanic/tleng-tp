@@ -1,0 +1,301 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> expr2
+Rule 1     expr2 -> expr
+Rule 2     expr -> expr OR concat
+Rule 3     expr -> concat
+Rule 4     concat -> concat unary
+Rule 5     concat -> unary
+Rule 6     unary -> atomic STAR
+Rule 7     unary -> atomic PLUS
+Rule 8     unary -> atomic QMARK
+Rule 9     unary -> atomic
+Rule 10    atomic -> DOT
+Rule 11    atomic -> CHAR
+Rule 12    atomic -> LPAREN expr RPAREN
+
+Terminals, with rules where they appear
+
+CHAR                 : 11
+DOT                  : 10
+LPAREN               : 12
+OR                   : 2
+PLUS                 : 7
+QMARK                : 8
+RPAREN               : 12
+STAR                 : 6
+error                : 
+
+Nonterminals, with rules where they appear
+
+atomic               : 6 7 8 9
+concat               : 2 3 4
+expr                 : 1 2 12
+expr2                : 0
+unary                : 4 5
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . expr2
+    (1) expr2 -> . expr
+    (2) expr -> . expr OR concat
+    (3) expr -> . concat
+    (4) concat -> . concat unary
+    (5) concat -> . unary
+    (6) unary -> . atomic STAR
+    (7) unary -> . atomic PLUS
+    (8) unary -> . atomic QMARK
+    (9) unary -> . atomic
+    (10) atomic -> . DOT
+    (11) atomic -> . CHAR
+    (12) atomic -> . LPAREN expr RPAREN
+
+    DOT             shift and go to state 6
+    CHAR            shift and go to state 7
+    LPAREN          shift and go to state 8
+
+    expr2                          shift and go to state 1
+    expr                           shift and go to state 2
+    concat                         shift and go to state 3
+    unary                          shift and go to state 4
+    atomic                         shift and go to state 5
+
+state 1
+
+    (0) S' -> expr2 .
+
+
+
+state 2
+
+    (1) expr2 -> expr .
+    (2) expr -> expr . OR concat
+
+    $end            reduce using rule 1 (expr2 -> expr .)
+    OR              shift and go to state 9
+
+
+state 3
+
+    (3) expr -> concat .
+    (4) concat -> concat . unary
+    (6) unary -> . atomic STAR
+    (7) unary -> . atomic PLUS
+    (8) unary -> . atomic QMARK
+    (9) unary -> . atomic
+    (10) atomic -> . DOT
+    (11) atomic -> . CHAR
+    (12) atomic -> . LPAREN expr RPAREN
+
+    OR              reduce using rule 3 (expr -> concat .)
+    $end            reduce using rule 3 (expr -> concat .)
+    RPAREN          reduce using rule 3 (expr -> concat .)
+    DOT             shift and go to state 6
+    CHAR            shift and go to state 7
+    LPAREN          shift and go to state 8
+
+    unary                          shift and go to state 10
+    atomic                         shift and go to state 5
+
+state 4
+
+    (5) concat -> unary .
+
+    DOT             reduce using rule 5 (concat -> unary .)
+    CHAR            reduce using rule 5 (concat -> unary .)
+    LPAREN          reduce using rule 5 (concat -> unary .)
+    OR              reduce using rule 5 (concat -> unary .)
+    $end            reduce using rule 5 (concat -> unary .)
+    RPAREN          reduce using rule 5 (concat -> unary .)
+
+
+state 5
+
+    (6) unary -> atomic . STAR
+    (7) unary -> atomic . PLUS
+    (8) unary -> atomic . QMARK
+    (9) unary -> atomic .
+
+    STAR            shift and go to state 11
+    PLUS            shift and go to state 12
+    QMARK           shift and go to state 13
+    DOT             reduce using rule 9 (unary -> atomic .)
+    CHAR            reduce using rule 9 (unary -> atomic .)
+    LPAREN          reduce using rule 9 (unary -> atomic .)
+    OR              reduce using rule 9 (unary -> atomic .)
+    $end            reduce using rule 9 (unary -> atomic .)
+    RPAREN          reduce using rule 9 (unary -> atomic .)
+
+
+state 6
+
+    (10) atomic -> DOT .
+
+    STAR            reduce using rule 10 (atomic -> DOT .)
+    PLUS            reduce using rule 10 (atomic -> DOT .)
+    QMARK           reduce using rule 10 (atomic -> DOT .)
+    DOT             reduce using rule 10 (atomic -> DOT .)
+    CHAR            reduce using rule 10 (atomic -> DOT .)
+    LPAREN          reduce using rule 10 (atomic -> DOT .)
+    OR              reduce using rule 10 (atomic -> DOT .)
+    $end            reduce using rule 10 (atomic -> DOT .)
+    RPAREN          reduce using rule 10 (atomic -> DOT .)
+
+
+state 7
+
+    (11) atomic -> CHAR .
+
+    STAR            reduce using rule 11 (atomic -> CHAR .)
+    PLUS            reduce using rule 11 (atomic -> CHAR .)
+    QMARK           reduce using rule 11 (atomic -> CHAR .)
+    DOT             reduce using rule 11 (atomic -> CHAR .)
+    CHAR            reduce using rule 11 (atomic -> CHAR .)
+    LPAREN          reduce using rule 11 (atomic -> CHAR .)
+    OR              reduce using rule 11 (atomic -> CHAR .)
+    $end            reduce using rule 11 (atomic -> CHAR .)
+    RPAREN          reduce using rule 11 (atomic -> CHAR .)
+
+
+state 8
+
+    (12) atomic -> LPAREN . expr RPAREN
+    (2) expr -> . expr OR concat
+    (3) expr -> . concat
+    (4) concat -> . concat unary
+    (5) concat -> . unary
+    (6) unary -> . atomic STAR
+    (7) unary -> . atomic PLUS
+    (8) unary -> . atomic QMARK
+    (9) unary -> . atomic
+    (10) atomic -> . DOT
+    (11) atomic -> . CHAR
+    (12) atomic -> . LPAREN expr RPAREN
+
+    DOT             shift and go to state 6
+    CHAR            shift and go to state 7
+    LPAREN          shift and go to state 8
+
+    expr                           shift and go to state 14
+    concat                         shift and go to state 3
+    unary                          shift and go to state 4
+    atomic                         shift and go to state 5
+
+state 9
+
+    (2) expr -> expr OR . concat
+    (4) concat -> . concat unary
+    (5) concat -> . unary
+    (6) unary -> . atomic STAR
+    (7) unary -> . atomic PLUS
+    (8) unary -> . atomic QMARK
+    (9) unary -> . atomic
+    (10) atomic -> . DOT
+    (11) atomic -> . CHAR
+    (12) atomic -> . LPAREN expr RPAREN
+
+    DOT             shift and go to state 6
+    CHAR            shift and go to state 7
+    LPAREN          shift and go to state 8
+
+    concat                         shift and go to state 15
+    unary                          shift and go to state 4
+    atomic                         shift and go to state 5
+
+state 10
+
+    (4) concat -> concat unary .
+
+    DOT             reduce using rule 4 (concat -> concat unary .)
+    CHAR            reduce using rule 4 (concat -> concat unary .)
+    LPAREN          reduce using rule 4 (concat -> concat unary .)
+    OR              reduce using rule 4 (concat -> concat unary .)
+    $end            reduce using rule 4 (concat -> concat unary .)
+    RPAREN          reduce using rule 4 (concat -> concat unary .)
+
+
+state 11
+
+    (6) unary -> atomic STAR .
+
+    DOT             reduce using rule 6 (unary -> atomic STAR .)
+    CHAR            reduce using rule 6 (unary -> atomic STAR .)
+    LPAREN          reduce using rule 6 (unary -> atomic STAR .)
+    OR              reduce using rule 6 (unary -> atomic STAR .)
+    $end            reduce using rule 6 (unary -> atomic STAR .)
+    RPAREN          reduce using rule 6 (unary -> atomic STAR .)
+
+
+state 12
+
+    (7) unary -> atomic PLUS .
+
+    DOT             reduce using rule 7 (unary -> atomic PLUS .)
+    CHAR            reduce using rule 7 (unary -> atomic PLUS .)
+    LPAREN          reduce using rule 7 (unary -> atomic PLUS .)
+    OR              reduce using rule 7 (unary -> atomic PLUS .)
+    $end            reduce using rule 7 (unary -> atomic PLUS .)
+    RPAREN          reduce using rule 7 (unary -> atomic PLUS .)
+
+
+state 13
+
+    (8) unary -> atomic QMARK .
+
+    DOT             reduce using rule 8 (unary -> atomic QMARK .)
+    CHAR            reduce using rule 8 (unary -> atomic QMARK .)
+    LPAREN          reduce using rule 8 (unary -> atomic QMARK .)
+    OR              reduce using rule 8 (unary -> atomic QMARK .)
+    $end            reduce using rule 8 (unary -> atomic QMARK .)
+    RPAREN          reduce using rule 8 (unary -> atomic QMARK .)
+
+
+state 14
+
+    (12) atomic -> LPAREN expr . RPAREN
+    (2) expr -> expr . OR concat
+
+    RPAREN          shift and go to state 16
+    OR              shift and go to state 9
+
+
+state 15
+
+    (2) expr -> expr OR concat .
+    (4) concat -> concat . unary
+    (6) unary -> . atomic STAR
+    (7) unary -> . atomic PLUS
+    (8) unary -> . atomic QMARK
+    (9) unary -> . atomic
+    (10) atomic -> . DOT
+    (11) atomic -> . CHAR
+    (12) atomic -> . LPAREN expr RPAREN
+
+    OR              reduce using rule 2 (expr -> expr OR concat .)
+    $end            reduce using rule 2 (expr -> expr OR concat .)
+    RPAREN          reduce using rule 2 (expr -> expr OR concat .)
+    DOT             shift and go to state 6
+    CHAR            shift and go to state 7
+    LPAREN          shift and go to state 8
+
+    unary                          shift and go to state 10
+    atomic                         shift and go to state 5
+
+state 16
+
+    (12) atomic -> LPAREN expr RPAREN .
+
+    STAR            reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    PLUS            reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    QMARK           reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    DOT             reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    CHAR            reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    LPAREN          reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    OR              reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    $end            reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+    RPAREN          reduce using rule 12 (atomic -> LPAREN expr RPAREN .)
+
