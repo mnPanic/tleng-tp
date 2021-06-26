@@ -1,5 +1,9 @@
+import string
+
 from typing import Set
 from dataclasses import dataclass
+
+ALL_DIGITS = list(string.ascii_lowercase + string.ascii_uppercase + string.digits + " ")
 
 @dataclass
 class Regex:
@@ -23,6 +27,9 @@ class Regex:
 
     def __str__(self) -> str:
         pass
+
+    def __eq__(self, o: object) -> bool:
+        return str(self) == str(o)
 
 @dataclass
 class Or(Regex):
@@ -157,7 +164,8 @@ class Dot(Regex):
         return False
 
     def alphabet(self) -> Set[str]:
-        return set()
+        #return set()
+        return ALL_DIGITS
 
     def der(self, symbol: str):
         return Lambda()

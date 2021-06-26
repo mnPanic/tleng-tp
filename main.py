@@ -7,7 +7,6 @@ from dataclasses import dataclass
 from regex import *
 from afd import *
 
-
 def main():
     while True:
         try:
@@ -18,27 +17,30 @@ def main():
         print(grep.expr)
         print(regex_to_afd(grep.expr))
 
-
 def regex_to_afd(expr: Regex):
     expr = expr.simplify()
 
     # expr
     finals: List[Regex] = []
     start = expr
-    states: List[Regex] = []
+    states: List[Regex] = [expr]
     trans = {}
 
     pending_states = [expr] # expr = L0
-    alphabet = expr.alphabet()
+    alphabet = sorted(list(expr.alphabet()))
 
     while (len(pending_states) != 0):
         current = pending_states.pop()
-        states.append(current)
 
         for char in alphabet:
             next = current.der(char).simplify()
+            if next.is_empty():
+                # "AFD"
+                continue
+
             if next not in states:
                 pending_states.append(next)
+                states.append(next)
 
             s_current = str(current)
             if s_current not in trans:
