@@ -32,3 +32,7 @@ Nota:
   ```
   python3 main.py test.txt .\*
   ```
+
+TODO:
+
+- "(a|a|b|b)" no simplifica? deberia ser "(a|a|b)"

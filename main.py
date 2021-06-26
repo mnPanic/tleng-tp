@@ -49,7 +49,7 @@ def regex_to_afd(expr: Regex):
 def main():
     filename = sys.argv[1]
     regex = sys.argv[2]
-    yacc.parse(f".*{regex}.*")
+    yacc.parse(f".*({regex}).*")
     #print(grep.expr.__repr__())
 
     afd = regex_to_afd(grep.expr)
