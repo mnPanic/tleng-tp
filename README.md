@@ -24,3 +24,11 @@ C -> CU | U
 U -> A* | A+ | A? | A
 A -> . | char | (E)
 ```
+
+Nota:
+
+- Para usar * escapealo
+
+  ```
+  python3 main.py test.txt .\*
+  ```

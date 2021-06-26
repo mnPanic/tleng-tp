@@ -3,7 +3,7 @@ import string
 from typing import Set
 from dataclasses import dataclass
 
-ALL_DIGITS = list(string.ascii_lowercase + string.ascii_uppercase + string.digits + " ")
+ALL_DIGITS = set(string.ascii_lowercase + string.ascii_uppercase + string.digits + " ")
 
 @dataclass
 class Regex:
@@ -58,7 +58,22 @@ class Or(Regex):
         if r_sim.is_empty():
             return l_sim
 
-        return Or(l_sim, r_sim)
+        return Or(l_sim, r_sim).simplify_redundant_or()
+    
+    def simplify_redundant_or(self):
+        # Problema:
+        # .*h.*|.*|.*
+        # ( ( (.*h) .*) |.*) |.*
+        #
+        # No agarra
+        # a | b | a
+
+        if isinstance(self.left, Or):
+            if self.left.right == self.right:
+                return self.left
+        
+        return self
+
     
     def __str__(self) -> str:
         return f"{str(self.left)}|{str(self.right)}"
