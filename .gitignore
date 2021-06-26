@@ -1,2 +1,6 @@
 __pycache__/
 .vscode
+
+# Xournal++
+*.autosave.xopp
+*.xopp~

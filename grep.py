@@ -38,7 +38,6 @@ def t_error(t):
     t.lexer.skip(1)
 
 # Build the lexer
-import ply.lex as lex
 lex.lex()
 
 expr = {}
@@ -92,13 +91,4 @@ def p_atomic_exp_paren(p):
 def p_error(p):
     print(f"Syntax error at {p.value!r}")
 
-import ply.yacc as yacc
 yacc.yacc()
-
-while True:
-    try:
-        s = input('regex> ')
-    except EOFError:
-        break
-    yacc.parse(s)
-    print(expr)
