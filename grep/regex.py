@@ -3,7 +3,7 @@ import string
 from typing import Set
 from dataclasses import dataclass
 
-ALL_DIGITS = set(string.ascii_lowercase + string.ascii_uppercase + string.digits + " ")
+CHARACTERS = set(string.ascii_lowercase + string.ascii_uppercase + string.digits + " ")
 
 @dataclass
 class Regex:
@@ -180,7 +180,7 @@ class Dot(Regex):
 
     def alphabet(self) -> Set[str]:
         #return set()
-        return ALL_DIGITS
+        return CHARACTERS
 
     def der(self, symbol: str):
         return Lambda()

@@ -28,14 +28,13 @@ t_QMARK = r'\?'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_CHAR = r'[a-zA-Z0-9 ]'
-t_DOT = r'.'
+t_DOT = r'\.'
 
 # Ignored characters
 t_ignore = "\n\t"
 
 def t_error(t):
-    print(f"Illegal character {t.value[0]!r}")
-    t.lexer.skip(1)
+    raise Exception(f"Lexer: Illegal character {t.value[0]!r}")
 
 # Build the lexer
 lex.lex()
@@ -89,6 +88,6 @@ def p_atomic_exp_paren(p):
     p[0] = Parentheses(p[2])
 
 def p_error(p):
-    raise Exception(f"Syntax error at {p.value!r}")
+    raise Exception(f"Parser: Syntax error at {p.value!r}")
 
 yacc.yacc()

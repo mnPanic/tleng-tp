@@ -52,14 +52,12 @@ def print_debug(s):
     if DEBUG:
         print(s)
 
-def main():
-    filename = sys.argv[1]
-    regex = sys.argv[2]
+def execute(regex: str, filename: str):
     try:
         yacc.parse(f".*({regex}).*")
     except Exception as e:
         print("Couldn't parse expression:", e)
-        return
+        return []
 
     print_debug(grep.expr.__repr__())
 
@@ -67,11 +65,21 @@ def main():
 
     print_debug(afd)
 
+    result = []
     with open(filename, 'r') as f:
         for line in f:
-            line = line.rstrip()
+            line = line.rstrip("\n")
             if afd.match(line):
-                print(line)
+                result.append(line)
+
+    return result
+
+def main():
+    filename = sys.argv[1]
+    regex = sys.argv[2]
+    lines = execute(regex, filename)
+    for line in lines:
+        print(line)
 
 if __name__ == "__main__":
     main()

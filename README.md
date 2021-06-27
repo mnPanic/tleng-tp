@@ -36,3 +36,9 @@ Nota:
 TODO:
 
 - "(a|a|b|b)" no simplifica? deberia ser "(a|a|b)"
+
+Consultas:
+
+- `.` es cualquier caracter o solamente los especificados en el enunciado?
+
+- AFD vs AFND, está bien haber hecho AFD directo?

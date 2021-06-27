@@ -27,7 +27,7 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> expr2","S'",1,None,None,None),
-  ('expr2 -> expr','expr2',1,'p_start','grep.py',47),
+  ('expr2 -> expr','expr2',1,'p_start','grep.py',46),
   ('expr -> expr OR concat','expr',3,'p_expression_or','grep.py',51),
   ('expr -> concat','expr',1,'p_expresssion_concat','grep.py',55),
   ('concat -> concat unary','concat',2,'p_concat','grep.py',59),
