@@ -1,3 +1,5 @@
+"""Ejemplo sacado de la docu de ply"""
+
 from ply import lex, yacc 
 
 # -----------------------------------------------------------------------------
