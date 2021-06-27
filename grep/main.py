@@ -2,11 +2,13 @@ import grep
 import sys
 from ply import yacc
 
-from typing import Set
+from typing import Set, List
 from dataclasses import dataclass
 
 from regex import *
 from afd import *
+
+DEBUG = False
 
 def regex_to_afd(expr: Regex):
     expr = expr.simplify()
@@ -46,14 +48,25 @@ def regex_to_afd(expr: Regex):
     
     return AFD(states, alphabet, trans, start, finals)
 
+def print_debug(s):
+    if DEBUG:
+        print(s)
+
 def main():
     filename = sys.argv[1]
     regex = sys.argv[2]
-    yacc.parse(f".*({regex}).*")
-    #print(grep.expr.__repr__())
+    try:
+        yacc.parse(f".*({regex}).*")
+    except Exception as e:
+        print("Couldn't parse expression:", e)
+        return
+
+    print_debug(grep.expr.__repr__())
 
     afd = regex_to_afd(grep.expr)
-    #print(afd)
+
+    print_debug(afd)
+
     with open(filename, 'r') as f:
         for line in f:
             line = line.rstrip()
@@ -61,4 +74,4 @@ def main():
                 print(line)
 
 if __name__ == "__main__":
-    main()    
+    main()

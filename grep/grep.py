@@ -89,6 +89,6 @@ def p_atomic_exp_paren(p):
     p[0] = Parentheses(p[2])
 
 def p_error(p):
-    print(f"Syntax error at {p.value!r}")
+    raise Exception(f"Syntax error at {p.value!r}")
 
 yacc.yacc()
