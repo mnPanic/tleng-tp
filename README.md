@@ -51,6 +51,7 @@ A -> . | char | (E)
 - Se implementó el lexer y parser con `ply`
 - Se modifica la regex `R` para que sea `.*(R).*`
 - El parser devuelve un objeto representado de forma estructura la regex provista
+- En caso de haber errores en el lexing o parsing se imprime un error y se detiene la ejecución.
 - Se realiza la derivación de la regex para construir un AFD (sin estado trampa)
 - Se corre el AFD para cada línea para ver si la acepta, y en ese caso se imprime por stdout.
 
@@ -116,6 +117,24 @@ cosas antes 54 9 1117428196 cosas despues
   54 9 1156434343
   54 9 1178434343
   54 9 117843434343
+  ```
+
+- `"-54"` tiene un caracter ilegal,
+
+  ```text
+  Couldn't parse expression: Lexer: Illegal character '-'
+  ```
+
+- `"54))"` tiene paréntesis desbalanceado
+
+  ```text
+  Couldn't parse expression: Parser: Syntax error at ')'
+  ```
+
+- `"54()` tiene una expresión vacía
+
+  ```text
+  Couldn't parse expression: Parser: Syntax error at ')'
   ```
 
 ## Consultas
