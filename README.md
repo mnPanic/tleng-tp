@@ -58,7 +58,7 @@ P':    E ⟶ E|C | C
 
 ### Lexer y Parser
 
-El trabajo fue implementado enteramente en **python**, en conjunto con la ayuda de la libreria `ply` para el desarrollo del *lexer* y el *parser*.
+El trabajo fue implementado enteramente en **python**, en conjunto con la ayuda de la biblioteca `ply` para el desarrollo del *lexer* y el *parser*.
 Durante la ejecución del parser, las producciones se encargan de generar y guardar en su nodo padre una objeto que haga de representación del operando o terminal (según corresponda) de la regex que se está parseando. Esto puede entenderse mejor desde el lado de una gramática de atributos en la cual *sintetizamos* este objeto, solo que en lugar de usar un atributo reemplazamos el valor del padre directamente.
 El resultado final es el de un objeto que sintetiza la expresión regular ingresada.<br>
 En caso de haber errores en el lexing o parsing se imprime un error y se detiene la ejecución.
