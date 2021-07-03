@@ -57,9 +57,11 @@ P':    E ⟶ E|C | C
 </tbody></table>
 
 ### Lexer y Parser
+
 El trabajo fue implementado enteramente en **python**, en conjunto con la ayuda de la libreria `ply` para el desarrollo del *lexer* y el *parser*.
 Durante la ejecución del parser, las producciones se encargan de generar y guardar en su nodo padre una objeto que haga de representación del operando o terminal (según corresponda) de la regex que se está parseando. Esto puede entenderse mejor desde el lado de una gramática de atributos en la cual *sintetizamos* este objeto, solo que en lugar de usar un atributo reemplazamos el valor del padre directamente.
-El resultado final es el de un objeto que sintetiza la expresión regular ingresada.
+El resultado final es el de un objeto que sintetiza la expresión regular ingresada.<br>
+En caso de haber errores en el lexing o parsing se imprime un error y se detiene la ejecución.
 
 ### AFD
 
@@ -78,6 +80,7 @@ Utilizando el método de las derivadas construimos el AFD correspondiente. Por s
 Para terminar, se detectan los estados finales como aquellos que contengan lambda en su lenguaje.
 
 ##### Nota acerca de la construcción del AFD:
+
 _En consultas con el corrector nos dimos cuenta de que no hay manera de ver si dos expresiones regulares son iguales, sin pasar estas a un autómata. Y por lo tanto, que la simplificación realizada es insuficiente paras solucionar los casos de particulares (siendo el mejor método el de  *Thompson*, pasando el automata resultante a un AFD).
 Como ya lo estaba hecho, nos dijo que lo dejemos así y que se tenía en cuenta para la corrección._
 
@@ -117,7 +120,7 @@ OK
 
 ## Casos de prueba
 
-Para el siguiente archivo,
+Se generó un archivo de texto con algunos números de telefono tanto correctos como incorrectos. Generamos distintas regex para comprobar el correcto funcionamiento de los automatas generados.
 
 ```text
 # grep/files/telefonos.txt
@@ -131,8 +134,9 @@ cosas antes 54 9 1117428196 cosas despues
 59 9 6714627827
 5685784939375769
 ```
+<br>
 
-- La regex `"54 9 11........"` da como resultado
+- La regex `/54 9 11......../` verifica que empieze como un número de CABA, da como resultado:
 
   ```text
   54 9 1117428196
@@ -143,7 +147,7 @@ cosas antes 54 9 1117428196 cosas despues
   54 9 1112469424
   ```
 
-- La regex `"54 9 11((43)?|(..))(43)+"` da como resultado
+- La regex `/54 9 11((43)?|(..))(43)+/` filtra el caso anterior por aquellos que contengan el "43", da como resultado:
 
   ```text
   54 9 1156434343
@@ -151,26 +155,20 @@ cosas antes 54 9 1117428196 cosas despues
   54 9 117843434343
   ```
 
-- `"-54"` tiene un caracter ilegal,
+- La regex `/-54/` tiene un caracter ilegal, por lo tanto devuelve un error del Lexer:
 
   ```text
   Couldn't parse expression: Lexer: Illegal character '-'
   ```
 
-- `"54))"` tiene paréntesis desbalanceado
+- La regex `/54))/` tiene paréntesis desbalanceado, por lo tanto devuelve un error del Parser:
 
   ```text
   Couldn't parse expression: Parser: Syntax error at ')'
   ```
 
-- `"54()` tiene una expresión vacía
+- La regex `/54()/` tiene una expresión vacía, por lo tanto devuelve un error del Parser:
 
   ```text
   Couldn't parse expression: Parser: Syntax error at ')'
   ```
-
-## Consultas
-
-- `.` es cualquier caracter o solamente los especificados en el enunciado?
-
-- AFD vs AFND, está bien haber hecho AFD directo?
