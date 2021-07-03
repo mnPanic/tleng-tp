@@ -17,8 +17,8 @@
 
 ## Implementación
 
-No hicimos ninguna indicación adicional al parser, sino que modificamos la
-gramática para que sea SLR. Pasamos de
+La gramática original resulta ser ambigua, frente a esto teniamos dos opciones. O bien definiamos la precedencia de los operadores y su asociatividad (aprovechando las herramientas de precedencia provistas por *ply*), o bien realizabamos una reescritura de la gramática. <br>
+Lo elegido fue lo segundo, la gramática modificada resultante es SLR y expresa en sus producciones la precedencia y asociatividad de los operandos, como se muestra a continuación:
 
 <table>
 <thead><tr><th>Original</th><th>Cambiada</th></tr></thead>
@@ -26,34 +26,66 @@ gramática para que sea SLR. Pasamos de
 <tr><td>
 
 ```text
-E -> E E
-  | E | E
-  | E *
-  | E +
-  | E ?
-  | ( E )
-  | caracter
-  | .
+<{E}, {|, *, +, ?, ., char, (, )}, P, E>
+
+P:  E ⟶ E E
+      | E | E
+      | E *
+      | E +
+      | E ?
+      | ( E )
+      | caracter
+      | .
 ```
 
 </td><td>
 
 ```text
-E -> E|C | C
-C -> CU | U
-U -> A* | A+ | A? | A
-A -> . | char | (E)
+<{E, C, U, A}, {|, *, +, ?, ., char, (, )}, P', E>
+
+P':    E ⟶ E|C | C
+       C ⟶ CU | U
+       U ⟶ A* | A+ | A? | A
+       A ⟶ . | char | (E)
+
+
+
+
 ```
 
 </td></tr>
 </tbody></table>
 
-- Se implementó el lexer y parser con `ply`
-- Se modifica la regex `R` para que sea `.*(R).*`
-- El parser devuelve un objeto representado de forma estructura la regex provista
-- En caso de haber errores en el lexing o parsing se imprime un error y se detiene la ejecución.
-- Se realiza la derivación de la regex para construir un AFD (sin estado trampa)
-- Se corre el AFD para cada línea para ver si la acepta, y en ese caso se imprime por stdout.
+### Lexer y Parser
+El trabajo fue implementado enteramente en **python**, en conjunto con la ayuda de la libreria `ply` para el desarrollo del *lexer* y el *parser*.
+Durante la ejecución del parser, las producciones se encargan de generar y guardar en su nodo padre una objeto que haga de representación del operando o terminal (según corresponda) de la regex que se está parseando. Esto puede entenderse mejor desde el lado de una gramática de atributos en la cual *sintetizamos* este objeto, solo que en lugar de usar un atributo reemplazamos el valor del padre directamente.
+El resultado final es el de un objeto que sintetiza la expresión regular ingresada.
+
+### AFD
+
+Utilizando el método de las derivadas construimos el AFD correspondiente. Por simplicidad definiremos el alfabeto como aquellos caracteres que aparezcan en la expresión regular dada por el usuario (en el caso de que aparezca un punto, se agregan todos los caracteres validos al diccionario). Definimos el estado inicial como el objeto generado por la gramática y, a partir de este:
+
+- Se recorre el alfabeto y los estados actuales, realizando una derivacion por símbolo.
+- Se realiza una simplificación del estado obtenido por la derivación, siendo esta de:
+  - Lambdas concatenados.
+  - Vacios concatenados/Vacios en una misma operación Or.
+  - Or's redundantes.
+- Se guarda el estado en caso de no ser un duplicado de los que ya se tiene (es decir si la expresión regular que representa es distinta a las ya g uardadas).
+- Se guarda la transiciones por símbolo en un diccionario.
+
+*Notemos que no contamos con un estado trampa, sino que este se deja implicito en el caso de que alguna transición por algún símbolo del alfabeto no exista.*
+
+Para terminar, se detectan los estados finales como aquellos que contengan lambda en su lenguaje.
+
+##### Nota acerca de la construcción del AFD:
+_En consultas con el corrector nos dimos cuenta de que no hay manera de ver si dos expresiones regulares son iguales, sin pasar estas a un autómata. Y por lo tanto, que la simplificación realizada es insuficiente paras solucionar los casos de particulares (siendo el mejor método el de  *Thompson*, pasando el automata resultante a un AFD).
+Como ya lo estaba hecho, nos dijo que lo dejemos así y que se tenía en cuenta para la corrección._
+
+
+### Busqueda de subcadenas
+
+Como queremos rezliar una busqueda de una subcadena que pertenezca al lenguaje de la expresión regular `R` ingresada por el usuario (en lugar de matchear con una linea entera), generamos un AFD para la expresión `.*(R).*`.
+Se recorre cada linea del archivo pasado por parámetro y se imprimen por *stdout* aquellas para las cuales el AFD matchea.
 
 ## Ejecutar
 
