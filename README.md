@@ -18,7 +18,7 @@
 ## Implementación
 
 La gramática original resulta ser ambigua, frente a esto teniamos dos opciones. O bien definiamos la precedencia de los operadores y su asociatividad (aprovechando las herramientas de precedencia provistas por *ply*), o bien realizabamos una reescritura de la gramática. <br>
-Lo elegido fue lo segundo, la gramática modificada resultante es SLR y expresa en sus producciones la precedencia y asociatividad de los operandos, como se muestra a continuación:
+Lo elegido fue lo segundo, la gramática modificada resultante es SLR (verificado con [grammophone](http://mdaines.github.io/grammophone/)) y expresa en sus producciones la precedencia y asociatividad de los operandos, como se muestra a continuación:
 
 <table>
 <thead><tr><th>Original</th><th>Cambiada</th></tr></thead>
@@ -79,7 +79,7 @@ Utilizando el método de las derivadas construimos el AFD correspondiente. Por s
 
 Para terminar, se detectan los estados finales como aquellos que contengan lambda en su lenguaje.
 
-##### Nota acerca de la construcción del AFD:
+##### Nota acerca de la construcción del AFD
 
 _En consultas con el corrector nos dimos cuenta de que no hay manera de ver si dos expresiones regulares son iguales, sin pasar estas a un autómata. Y por lo tanto, que la simplificación realizada es insuficiente paras solucionar los casos de particulares (siendo el mejor método el de  *Thompson*, pasando el automata resultante a un AFD).
 Como ya lo estaba hecho, nos dijo que lo dejemos así y que se tenía en cuenta para la corrección._

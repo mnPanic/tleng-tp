@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Trabajo Pr&aacute;ctico - Teor&iacute;a de Lenguajes</title>
+        <style>
+</style>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
+<link href="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item { list-style-type: none; } .task-list-item-checkbox { margin-left: -20px; vertical-align: middle; }
+</style>
+        
+        <script src="https://cdn.jsdelivr.net/npm/katex-copytex@latest/dist/katex-copytex.min.js"></script>
+        
+    </head>
+    <body class="vscode-body vscode-light">
+        <h1 id="trabajo-práctico---teoría-de-lenguajes">Trabajo Práctico - Teoría de Lenguajes</h1>
+<!-- 
+• Las modificaciones a la gramática o indicaciones adicionales que hayan sido necesarias para construir el parser.
+• Descripción de cómo se implementó la solución.
+• Información y requerimientos de software para ejecutar y recompilar el TP (versiones de compiladores, herramientas, plataforma, etc).
+• Casos de prueba con expresiones sintácticamente correctas e incorrectas, resultados obtenidos y conclusiones.
+-->
+<h2 id="integrantes">Integrantes</h2>
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Mail</th>
+<th>LU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Diego Senarruzza</td>
+<td><a href="mailto:diegosenarruzza@gmail.com">diegosenarruzza@gmail.com</a></td>
+<td>449/17</td>
+</tr>
+<tr>
+<td>Julian Zylber</td>
+<td><a href="mailto:jzylber@dc.uba.ar">jzylber@dc.uba.ar</a></td>
+<td>21/18</td>
+</tr>
+<tr>
+<td>Manuel Panichelli</td>
+<td><a href="mailto:panicmanu@gmail.com">panicmanu@gmail.com</a></td>
+<td>72/18</td>
+</tr>
+</tbody>
+</table>
+<h2 id="implementación">Implementación</h2>
+<p>La gramática original resulta ser ambigua, frente a esto teniamos dos opciones. O bien definiamos la precedencia de los operadores y su asociatividad (aprovechando las herramientas de precedencia provistas por <em>ply</em>), o bien realizabamos una reescritura de la gramática. <br>
+Lo elegido fue lo segundo, la gramática modificada resultante es SLR (verificado con <a href="http://mdaines.github.io/grammophone/">grammophone</a>) y expresa en sus producciones la precedencia y asociatividad de los operandos, como se muestra a continuación:</p>
+<table>
+<thead><tr><th>Original</th><th>Cambiada</th></tr></thead>
+<tbody>
+<tr><td>
+<pre><code class="language-text"><div>&lt;{E}, {|, *, +, ?, ., char, (, )}, P, E&gt;
+
+P:  E ⟶ E E
+      | E | E
+      | E *
+      | E +
+      | E ?
+      | ( E )
+      | caracter
+      | .
+</div></code></pre>
+</td><td>
+<pre><code class="language-text"><div>&lt;{E, C, U, A}, {|, *, +, ?, ., char, (, )}, P&#x27;, E&gt;
+
+P&#x27;:    E ⟶ E|C | C
+       C ⟶ CU | U
+       U ⟶ A* | A+ | A? | A
+       A ⟶ . | char | (E)
+
+
+
+
+</div></code></pre>
+</td></tr>
+</tbody></table>
+<h3 id="lexer-y-parser">Lexer y Parser</h3>
+<p>El trabajo fue implementado enteramente en <strong>python</strong>, en conjunto con la ayuda de la biblioteca <code>ply</code> para el desarrollo del <em>lexer</em> y el <em>parser</em>.
+Durante la ejecución del parser, las producciones se encargan de generar y guardar en su nodo padre una objeto que haga de representación del operando o terminal (según corresponda) de la regex que se está parseando. Esto puede entenderse mejor desde el lado de una gramática de atributos en la cual <em>sintetizamos</em> este objeto, solo que en lugar de usar un atributo reemplazamos el valor del padre directamente.
+El resultado final es el de un objeto que sintetiza la expresión regular ingresada.<br>
+En caso de haber errores en el lexing o parsing se imprime un error y se detiene la ejecución.</p>
+<h3 id="afd">AFD</h3>
+<p>Utilizando el método de las derivadas construimos el AFD correspondiente. Por simplicidad definiremos el alfabeto como aquellos caracteres que aparezcan en la expresión regular dada por el usuario (en el caso de que aparezca un punto, se agregan todos los caracteres validos al diccionario). Definimos el estado inicial como el objeto generado por la gramática y, a partir de este:</p>
+<ul>
+<li>Se recorre el alfabeto y los estados actuales, realizando una derivacion por símbolo.</li>
+<li>Se realiza una simplificación del estado obtenido por la derivación, siendo esta de:
+<ul>
+<li>Lambdas concatenados.</li>
+<li>Vacios concatenados/Vacios en una misma operación Or.</li>
+<li>Or's redundantes.</li>
+</ul>
+</li>
+<li>Se guarda el estado en caso de no ser un duplicado de los que ya se tiene (es decir si la expresión regular que representa es distinta a las ya g uardadas).</li>
+<li>Se guarda la transiciones por símbolo en un diccionario.</li>
+</ul>
+<p><em>Notemos que no contamos con un estado trampa, sino que este se deja implicito en el caso de que alguna transición por algún símbolo del alfabeto no exista.</em></p>
+<p>Para terminar, se detectan los estados finales como aquellos que contengan lambda en su lenguaje.</p>
+<h5 id="nota-acerca-de-la-construcción-del-afd">Nota acerca de la construcción del AFD</h5>
+<p><em>En consultas con el corrector nos dimos cuenta de que no hay manera de ver si dos expresiones regulares son iguales, sin pasar estas a un autómata. Y por lo tanto, que la simplificación realizada es insuficiente paras solucionar los casos de particulares (siendo el mejor método el de  <em>Thompson</em>, pasando el automata resultante a un AFD).
+Como ya lo estaba hecho, nos dijo que lo dejemos así y que se tenía en cuenta para la corrección.</em></p>
+<h3 id="busqueda-de-subcadenas">Busqueda de subcadenas</h3>
+<p>Como queremos rezliar una busqueda de una subcadena que pertenezca al lenguaje de la expresión regular <code>R</code> ingresada por el usuario (en lugar de matchear con una linea entera), generamos un AFD para la expresión <code>.*(R).*</code>.
+Se recorre cada linea del archivo pasado por parámetro y se imprimen por <em>stdout</em> aquellas para las cuales el AFD matchea.</p>
+<h2 id="ejecutar">Ejecutar</h2>
+<p>Para bajar las dependencias (solo <code>ply</code> y <code>dataclasses</code>),</p>
+<pre><code class="language-bash"><div>pip3 install -r requirements.txt
+</div></code></pre>
+<p>Para correrlo,</p>
+<pre><code class="language-bash"><div>$ python3 main.py files/telefonos.txt <span class="hljs-string">&quot;54 9 11((43)?|(..))(43)+&quot;</span>
+54 9 1156434343
+54 9 1178434343
+54 9 117843434343
+</div></code></pre>
+<p>Para ejecutar los tests,</p>
+<pre><code class="language-bash"><div>$ python3 tests.py
+.
+----------------------------------------------------------------------
+Ran 1 <span class="hljs-built_in">test</span> <span class="hljs-keyword">in</span> 1.107s
+
+OK
+</div></code></pre>
+<h2 id="casos-de-prueba">Casos de prueba</h2>
+<p>Se generó un archivo de texto con algunos números de telefono tanto correctos como incorrectos. Generamos distintas regex para comprobar el correcto funcionamiento de los automatas generados.</p>
+<pre><code class="language-text"><div># grep/files/telefonos.txt
+54 9 1117428196
+54 9 1156434343
+54 9 1178434343
+54 9 117843434343
+cosas antes 54 9 1117428196 cosas despues
+54 9 1112469424
+5996714627827
+59 9 6714627827
+5685784939375769
+</div></code></pre>
+<br>
+<ul>
+<li>
+<p>La regex <code>/54 9 11......../</code> verifica que empieze como un número de CABA, da como resultado:</p>
+<pre><code class="language-text"><div>54 9 1117428196
+54 9 1156434343
+54 9 1178434343
+54 9 117843434343
+cosas antes 54 9 1117428196 cosas despues
+54 9 1112469424
+</div></code></pre>
+</li>
+<li>
+<p>La regex <code>/54 9 11((43)?|(..))(43)+/</code> filtra el caso anterior por aquellos que contengan el &quot;43&quot;, da como resultado:</p>
+<pre><code class="language-text"><div>54 9 1156434343
+54 9 1178434343
+54 9 117843434343
+</div></code></pre>
+</li>
+<li>
+<p>La regex <code>/-54/</code> tiene un caracter ilegal, por lo tanto devuelve un error del Lexer:</p>
+<pre><code class="language-text"><div>Couldn&#x27;t parse expression: Lexer: Illegal character &#x27;-&#x27;
+</div></code></pre>
+</li>
+<li>
+<p>La regex <code>/54))/</code> tiene paréntesis desbalanceado, por lo tanto devuelve un error del Parser:</p>
+<pre><code class="language-text"><div>Couldn&#x27;t parse expression: Parser: Syntax error at &#x27;)&#x27;
+</div></code></pre>
+</li>
+<li>
+<p>La regex <code>/54()/</code> tiene una expresión vacía, por lo tanto devuelve un error del Parser:</p>
+<pre><code class="language-text"><div>Couldn&#x27;t parse expression: Parser: Syntax error at &#x27;)&#x27;
+</div></code></pre>
+</li>
+</ul>
+
+    </body>
+    </html>

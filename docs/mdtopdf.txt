@@ -1,0 +1,33 @@
+Para pasar de markdown a pdf,
+
+1. Convertir de markdown a html. Por ejemplo usando la extensión "Markdown All
+   In One"
+
+2. Agregar los linebreaks que sean necesarios agregando al principio del HTML
+   dentro de <style>
+
+    <style>
+    /* Para que wkhtmltopdf respete los page breaks */
+    @media print {
+        .new-page {
+            page-break-before: always;
+        }
+    }
+    </style>
+
+   Agregarle a los elementos el class="new-page" para que aparezcan en una nueva
+   página.
+
+3. Convertir de html a pdf con wkhtmltopdf
+
+    wkhtmltopdf \
+        --print-media-type \
+        --margin-bottom 20mm \
+        --margin-top 20mm \
+        --margin-left 20mm \
+        --margin-right 20mm \
+        informe.html informe.pdf
+    
+    --print-media-type es para que respete lo que hicimos en el paso 2.
+    
+    Fuente: https://stackoverflow.com/questions/42005819/how-to-insert-a-page-break-in-html-so-wkhtmltopdf-parses-it
